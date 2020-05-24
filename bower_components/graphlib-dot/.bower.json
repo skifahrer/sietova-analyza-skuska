@@ -1,0 +1,38 @@
+{
+  "name": "graphlib-dot",
+  "version": "0.6.4",
+  "main": [
+    "dist/graphlib-dot.core.js",
+    "dist/graphlib-dot.core.min.js"
+  ],
+  "ignore": [
+    ".*",
+    "README.md",
+    "CHANGELOG.md",
+    "Makefile",
+    "browser.js",
+    "dist/graphlib-dot.js",
+    "dist/graphlib-dot.min.js",
+    "index.js",
+    "karma*",
+    "lib/**",
+    "package.json",
+    "src/**",
+    "test/**"
+  ],
+  "dependencies": {
+    "graphlib": "^2.1.8",
+    "lodash": "^4.17.15"
+  },
+  "homepage": "https://github.com/cpettitt/graphlib-dot",
+  "_release": "0.6.4",
+  "_resolution": {
+    "type": "version",
+    "tag": "v0.6.4",
+    "commit": "12e88a5938bd8566630388452a76388a468646f7"
+  },
+  "_source": "https://github.com/cpettitt/graphlib-dot.git",
+  "_target": "^0.6.4",
+  "_originalSource": "graphlib-dot",
+  "_direct": true
+}

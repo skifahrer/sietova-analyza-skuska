@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/DTD/strict.dtd">
+<html>
+<head>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type">
+  <title>Firebug Lite</title>
+  <!-- An empty script to avoid FOUC when loading the stylesheet -->
+  <script type="text/javascript"></script>
+  <style media="screen" type="text/css">@import "firebug.css";</style>
+  <style>html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }</style>
+</head>
+<body class="fbBody">
+<table border="0" cellpadding="0" cellspacing="0" id="fbChrome">
+  <tbody>
+  <tr>
+    <!-- Interface - Top Area -->
+    <td colspan="2" id="fbTop">
+
+      <!--
+      <div>
+        --><!-- <span id="fbToolbarErrors" class="fbErrors">2 errors</span> --><!--
+          <input type="text" id="fbToolbarSearch" />
+        </div>
+        -->
+
+      <!-- Window Buttons -->
+      <div id="fbWindowButtons">
+        <a class="fbSmallButton fbHover" id="fbWindow_btDeactivate"
+           title="Deactivate Firebug for this web page">&nbsp;</a>
+        <a class="fbSmallButton fbHover" id="fbWindow_btDetach" title="Open Firebug in popup window">&nbsp;</a>
+        <a class="fbSmallButton fbHover" id="fbWindow_btClose" title="Minimize Firebug">&nbsp;</a>
+      </div>
+
+      <!-- Toolbar buttons and Status Bar -->
+      <div id="fbToolbar">
+        <div id="fbToolbarContent">
+
+          <!-- Firebug Button -->
+          <span id="fbToolbarIcon">
+            <a class="fbIconButton" class="fbHover" id="fbFirebugButton" target="_blank">&nbsp;</a>
+          </span>
+
+          <!--
+          <span id="fbLeftToolbarErrors" class="fbErrors">2 errors</span>
+           -->
+
+          <!-- Toolbar Buttons -->
+          <span id="fbToolbarButtons">
+            <!-- Fixed Toolbar Buttons -->
+            <span id="fbFixedButtons">
+                <a class="fbButton fbHover" id="fbChrome_btInspect" title="Click an element in the page to inspect">Inspect</a>
+            </span>
+
+            <!-- Console Panel Toolbar Buttons -->
+            <span class="fbToolbarButtons" id="fbConsoleButtons">
+              <a class="fbButton fbHover" id="fbConsole_btClear" title="Clear the console">Clear</a>
+            </span>
+
+            <!-- HTML Panel Toolbar Buttons -->
+            <!--
+            <span id="fbHTMLButtons" class="fbToolbarButtons">
+              <a id="fbHTML_btEdit" class="fbHover" title="Edit this HTML">Edit</a>
+            </span>
+             -->
+          </span>
+
+          <!-- Status Bar -->
+          <span id="fbStatusBarBox">
+            <span class="fbToolbarSeparator"></span>
+            <!-- HTML Panel Status Bar -->
+            <!--
+            <span id="fbHTMLStatusBar" class="fbStatusBar fbToolbarButtons">
+            </span>
+             -->
+          </span>
+
+        </div>
+
+      </div>
+
+      <!-- PanelBars -->
+      <div id="fbPanelBarBox">
+
+        <!-- Main PanelBar -->
+        <div class="fbPanelBar" id="fbPanelBar1">
+          <a class="fbTab fbHover" id="fbConsoleTab">
+            <span class="fbTabL"></span>
+            <span class="fbTabText">Console</span>
+            <span class="fbTabMenuTarget"></span>
+            <span class="fbTabR"></span>
+          </a>
+          <a class="fbTab fbHover" id="fbHTMLTab">
+            <span class="fbTabL"></span>
+            <span class="fbTabText">HTML</span>
+            <span class="fbTabR"></span>
+          </a>
+          <a class="fbTab fbHover">
+            <span class="fbTabL"></span>
+            <span class="fbTabText">CSS</span>
+            <span class="fbTabR"></span>
+          </a>
+          <a class="fbTab fbHover">
+            <span class="fbTabL"></span>
+            <span class="fbTabText">Script</span>
+            <span class="fbTabR"></span>
+          </a>
+          <a class="fbTab fbHover">
+            <span class="fbTabL"></span>
+            <span class="fbTabText">DOM</span>
+            <span class="fbTabR"></span>
+          </a>
+        </div>
+
+        <!-- Side PanelBars -->
+        <div class="hide" id="fbPanelBar2Box">
+          <div class="fbPanelBar" id="fbPanelBar2">
+            <!--
+              <a class="fbTab fbHover">
+                <span class="fbTabL"></span>
+                <span class="fbTabText">Style</span>
+                <span class="fbTabR"></span>
+              </a>
+              <a class="fbTab fbHover">
+                <span class="fbTabL"></span>
+                <span class="fbTabText">Layout</span>
+                <span class="fbTabR"></span>
+              </a>
+              <a class="fbTab fbHover">
+                <span class="fbTabL"></span>
+                <span class="fbTabText">DOM</span>
+                <span class="fbTabR"></span>
+              </a>
+           -->
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Horizontal Splitter -->
+      <div id="fbHSplitter">&nbsp;</div>
+
+    </td>
+  </tr>
+
+  <!-- Interface - Main Area -->
+  <tr id="fbContent">
+
+    <!-- Panels  -->
+    <td id="fbPanelBox1">
+      <div class="fbFitHeight" id="fbPanel1">
+        <div class="fbPanel" id="fbConsole"></div>
+        <div class="fbPanel" id="fbHTML"></div>
+      </div>
+    </td>
+
+    <!-- Side Panel Box -->
+    <td class="hide" id="fbPanelBox2">
+
+      <!-- VerticalSplitter -->
+      <div class="fbVSplitter" id="fbVSplitter">&nbsp;</div>
+
+      <!-- Side Panels -->
+      <div class="fbFitHeight" id="fbPanel2">
+
+        <!-- HTML Side Panels -->
+        <div class="fbPanel" id="fbHTML_Style"></div>
+        <div class="fbPanel" id="fbHTML_Layout"></div>
+        <div class="fbPanel" id="fbHTML_DOM"></div>
+
+      </div>
+
+      <!-- Large Command Line -->
+      <textarea class="fbFitHeight" id="fbLargeCommandLine"></textarea>
+
+      <!-- Large Command Line Buttons -->
+      <div id="fbLargeCommandButtons">
+        <a class="fbButton fbHover" id="fbCommand_btRun">Run</a>
+        <a class="fbButton fbHover" id="fbCommand_btClear">Clear</a>
+
+        <a class="fbSmallButton fbHover" id="fbSmallCommandLineIcon"></a>
+      </div>
+
+    </td>
+
+  </tr>
+
+  <!-- Interface - Bottom Area -->
+  <tr class="hide" id="fbBottom">
+
+    <!-- Command Line -->
+    <td colspan="2" id="fbCommand">
+      <div id="fbCommandBox">
+        <div id="fbCommandIcon">&gt;&gt;&gt;</div>
+        <input id="fbCommandLine" name="fbCommandLine" type="text"/>
+        <a class="fbSmallButton fbHover" id="fbLargeCommandLineIcon"></a>
+      </div>
+    </td>
+
+  </tr>
+
+  </tbody>
+</table>
+<span id="fbMiniChrome">
+  <span id="fbMiniContent">
+    <span id="fbMiniIcon" title="Open Firebug Lite"></span>
+    <span class="fbErrors" id="fbMiniErrors"><!-- 2 errors --></span>
+  </span>
+</span>
+<!--
+<div id="fbErrorPopup">
+  <div id="fbErrorPopupContent">
+    <div id="fbErrorIndicator" class="fbErrors">2 errors</div>
+  </div>
+</div>
+ -->
+</body>
+</html>
