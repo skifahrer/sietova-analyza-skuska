@@ -8,7 +8,8 @@
 
 class Kruskal extends Algoritmus {
     compute() {
-        super.compute();
+        let edges_sorted = super.edges_sorted();
+        this.log('Vybrali sme vsetky hrany a zotriedili ich podla hodnoty hrany. Poznamka: paramter label je hodnota hrany.', edges_sorted);
 
 
     }
