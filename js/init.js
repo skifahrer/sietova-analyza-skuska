@@ -147,13 +147,13 @@ class Logger {
 
     _highlight(visn, dataset, object) {
         var edges = [];
-        if (this.draw_object_type(object) === 'EDG') {
-            edges = this.draw_get_edges(dataset, object);
-            this.vis_updateEdgesForIds(visn, dataset, edges, '#ff383f');
+        if (this._get_object_type(object) === 'EDG') {
+            edges = this._get_edges_from_object(dataset, object);
+            this._highlight_edges(visn, dataset, edges, '#ff383f');
         }
     }
 
-    vis_updateEdgesForIds(visn, dataset, edges, color) {
+    _highlight_edges(visn, dataset, edges, color) {
         let colored_edges = [];
         dataset.edges = _.map(dataset.edges, function (edge) {
             if (_.includes(edges, edge.id)) {
@@ -175,7 +175,7 @@ class Logger {
         visn.setData(dataset);
     }
 
-    draw_object_type(object) {
+    _get_object_type(object) {
         if (_.every(object, function (o) {
             return _.has(o, 'w')
         })) {
@@ -183,7 +183,7 @@ class Logger {
         }
     }
 
-    draw_get_edges(dataset, object) {
+    _get_edges_from_object(dataset, object) {
         let edge_ids = [];
         let self = this.self;
         _.forEach(object, function (value) {
