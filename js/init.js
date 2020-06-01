@@ -4,19 +4,38 @@ let options = {layout: {randomSeed: 2}, edges: {color: {color: "blue"}}};
 
 (function ($) {
     $(function () {
-        $("#graphinput").val('graph { A; B; C; D; E; ' + '\n' +
-            'A -- B [label="4"];' + '\n' +
-            'B -- D [label="5"];' + '\n' +
-            'D -- E [label="6"];' + '\n' +
-            'E -- A [label="4"];' + '\n' +
-            'C -- A [label="9"];' + '\n' +
-            'C -- B [label="7"];' + '\n' +
-            'C -- D [label="6"];' + '\n' +
-            'C -- E [label="6"];' + '\n' +
-            'splines=false;' +
-            '}');
-        M.textareaAutoResize($('#graphinput'));
-        alg = new Algoritmus();
+
+        $("#neorientovany").click(function () {
+            $("#graphinput").val('graph { A; B; C; D; E; ' + '\n' +
+                'A -- B [label="4"];' + '\n' +
+                'B -- D [label="5"];' + '\n' +
+                'D -- E [label="6"];' + '\n' +
+                'E -- A [label="4"];' + '\n' +
+                'C -- A [label="9"];' + '\n' +
+                'C -- B [label="7"];' + '\n' +
+                'C -- D [label="6"];' + '\n' +
+                'C -- E [label="6"];' + '\n' +
+                'splines=false;' +
+                '}');
+            M.textareaAutoResize($('#graphinput'));
+            alg = new Algoritmus();
+        });
+
+        $("#orientovany").click(function () {
+            $("#graphinput").val('digraph { A; B; C; D; E; ' + '\n' +
+                'A -> B [label="4"];' + '\n' +
+                'B -> D [label="5"];' + '\n' +
+                'D -> E [label="6"];' + '\n' +
+                'E -> A [label="4"];' + '\n' +
+                'C -> A [label="9"];' + '\n' +
+                'C -> B [label="7"];' + '\n' +
+                'C -> D [label="6"];' + '\n' +
+                'C -> E [label="6"];' + '\n' +
+                'splines=false;' +
+                '}');
+            M.textareaAutoResize($('#graphinput'));
+            alg = new Algoritmus();
+        });
     });
 
     $("#graphinput").bind('input propertychange', function () {
@@ -82,7 +101,8 @@ class Algoritmus {
         this.logger.log(text, object, draw);
     }
 
-    compute() {
+    compute(title) {
+        this.logger.init(title);
     }
 }
 
@@ -95,6 +115,15 @@ class Logger {
         this.output = $("#output");
         this.step = 1;
         this.alg = alg;
+    }
+
+    init(title) {
+        this.clear();
+        this.log_title(title);
+    }
+
+    log_title(title) {
+        $("#output").prepend('<h2>' + title + '</h2>');
     }
 
     log(text, object, draw) {
@@ -206,8 +235,8 @@ class Logger {
         });
     };
 
-    clear_log() {
-        $("#output").val('');
+    clear() {
+        $("#output").html('');
     }
 }
 

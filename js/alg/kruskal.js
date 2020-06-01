@@ -8,7 +8,9 @@
 
 class Kruskal extends Algoritmus {
     compute() {
-        let G = graphlib.alg.components(this.graph)[0]; //pretoze to vrati pole poli
+        super.compute('Kruskalov Algoritmus');
+
+        let G = graphlib.alg.components(this.graph)[0]; //vrati nam komponent grafy v poly
         var A = [];
         var S = [];
         var K = [];
