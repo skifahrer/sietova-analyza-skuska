@@ -4,15 +4,15 @@ let options = {layout: {randomSeed: 2}};
 
 (function ($) {
     $(function () {
-        $("#graphinput").val('graph { A; B; C; D; E; ' + '\n' +
-            'A -- B [label="4"];' + '\n' +
-            'B -- D [label="5"];' + '\n' +
-            'D -- E [label="6"];' + '\n' +
-            'E -- A [label="4"];' + '\n' +
-            'C -- A [label="9"];' + '\n' +
-            'C -- B [label="7"];' + '\n' +
-            'C -- D [label="6"];' + '\n' +
-            'C -- E [label="6"];' + '\n' +
+        $("#graphinput").val('digraph { A; B; C; D; E; ' + '\n' +
+            'A -> B [label="4"];' + '\n' +
+            'B -> D [label="5"];' + '\n' +
+            'D -> E [label="6"];' + '\n' +
+            'E -> A [label="4"];' + '\n' +
+            'C -> A [label="9"];' + '\n' +
+            'C -> B [label="7"];' + '\n' +
+            'C -> D [label="6"];' + '\n' +
+            'C -> E [label="6"];' + '\n' +
             'splines=false;' +
             '}');
         M.textareaAutoResize($('#graphinput'));
@@ -140,49 +140,53 @@ class Logger {
 
     draw(canvas, object) {
         var visn = new vis.Network(canvas, {}, options);
-        var datadot = vis.parseDOTNetwork(this.alg.dot);
-        visn.setData(datadot);
-        this.draw_highlight(visn, object);
+        var dataset = vis.parseDOTNetwork(this.alg.dot);
+        visn.setData(dataset);
+        this.draw_highlight(visn, dataset, object);
     }
 
-    draw_highlight(visn, object) {
+    draw_highlight(visn, dataset, object) {
         var ids = [];
         if (this.draw_object_type(object) === 'EDGE') {
-            ids = this.draw_get_edge_ids(visn, object);
-            _.forEach(ids, function (id) {
-                let options = {
-                    edges: {
-                        id: id,
-                        color: {
-                            color: "red"
-                        }
-                    }
-                };
-                visn.setOptions(options);
-            });
+            ids = this.draw_get_edge_ids(dataset, object);
+            this.vis_updateEdgesForIds(visn, dataset, ids, {color: '#ff383f'});
         }
     }
 
+    vis_updateEdgesForIds(visn, dataset, ids, color) {
+        _.forEach(ids, function (id) {
+            let options = {
+                edges: {
+                    id: id,
+                    color: color
+                }
+            }
+            visn.setOptions(options);
+        });
+    }
+
     draw_object_type(object) {
-        let edges = ['v', 'w']
-        if (_.every(edges, _.partial(_.has, object))) {
+        if (_.every(object, function (o) {
+            return _.has(o, 'w')
+        })) {
             return 'EDGE';
         }
     }
 
-    draw_get_edge_ids(vis, object) {
+    draw_get_edge_ids(dataset, object) {
         let edge_ids = [];
+        let self = this.self;
         _.forEach(object, function (value) {
-            let id = this.self.vis_getEdgeBetweenNodes(vis, value.v, value.w);
-            if ('null' !== id) {
-                edge_ids.push(id);
+            let edge = self.vis_getEdgeBetweenNodes(dataset, value.v, value.w);
+            if ('null' !== edge || [] !== edge) {
+                edge_ids.push(edge[0].id);
             }
         });
         return edge_ids;
     }
 
-    vis_getEdgeBetweenNodes(visn, node1, node2) {
-        return visn.edges.get().filter(function (edge) {
+    vis_getEdgeBetweenNodes(dataset, node1, node2) {
+        return dataset.edges.filter(function (edge) {
             return (edge.from === node1 && edge.to === node2);
         });
     };
