@@ -1,5 +1,25 @@
 let alg;
-let options = {layout: {randomSeed: 2}, edges: {color: {color: "blue"}}};
+let options = {
+    layout: {
+        randomSeed: 2,
+    },
+    edges: {
+        color: {color: "blue"},
+        smooth: {
+            enabled: true,
+            type: "dynamic",
+            roundness: 0.1
+        },
+        width: 1,
+        arrowStrikethrough: true,
+        arrows: {
+            to: {
+                enabled: false,
+                scaleFactor: 0.3,
+            }
+        }
+    }
+};
 
 
 (function ($) {
@@ -7,10 +27,10 @@ let options = {layout: {randomSeed: 2}, edges: {color: {color: "blue"}}};
 
         $("#neorientovany").click(function () {
             $("#graphinput").val('graph { A; B; C; D; E; ' + '\n' +
-                'A -- B [label="4"];' + '\n' +
-                'B -- D [label="5"];' + '\n' +
+                'A -- B [label="6"];' + '\n' +
+                'B -- D [label="4"];' + '\n' +
                 'D -- E [label="6"];' + '\n' +
-                'E -- A [label="4"];' + '\n' +
+                'A -- E [label="4"];' + '\n' +
                 'C -- A [label="9"];' + '\n' +
                 'C -- B [label="7"];' + '\n' +
                 'C -- D [label="6"];' + '\n' +
@@ -24,13 +44,29 @@ let options = {layout: {randomSeed: 2}, edges: {color: {color: "blue"}}};
         $("#orientovany").click(function () {
             $("#graphinput").val('digraph { A; B; C; D; E; ' + '\n' +
                 'A -> B [label="4"];' + '\n' +
+                'B -> A [label="3"];' + '\n' +
+
                 'B -> D [label="5"];' + '\n' +
+                'D -> B [label="5"];' + '\n' +
+
                 'D -> E [label="6"];' + '\n' +
-                'E -> A [label="4"];' + '\n' +
+                'E -> D [label="3"];' + '\n' +
+
+                'A -> E [label="4"];' + '\n' +
+                'E -> A [label="3"];' + '\n' +
+
                 'C -> A [label="9"];' + '\n' +
+                'A -> C [label="9"];' + '\n' +
+
                 'C -> B [label="7"];' + '\n' +
+                'B -> C [label="5"];' + '\n' +
+
                 'C -> D [label="6"];' + '\n' +
+                'D -> C [label="6"];' + '\n' +
+
                 'C -> E [label="6"];' + '\n' +
+                'E -> C [label="4"];' + '\n' +
+
                 'splines=false;' +
                 '}');
             M.textareaAutoResize($('#graphinput'));
