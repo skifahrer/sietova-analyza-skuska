@@ -1,18 +1,18 @@
 let alg;
-let options = {layout: {randomSeed: 2}};
+let options = {layout: {randomSeed: 2}, edges: {color: {color: "blue"}}};
 
 
 (function ($) {
     $(function () {
-        $("#graphinput").val('digraph { A; B; C; D; E; ' + '\n' +
-            'A -> B [label="4"];' + '\n' +
-            'B -> D [label="5"];' + '\n' +
-            'D -> E [label="6"];' + '\n' +
-            'E -> A [label="4"];' + '\n' +
-            'C -> A [label="9"];' + '\n' +
-            'C -> B [label="7"];' + '\n' +
-            'C -> D [label="6"];' + '\n' +
-            'C -> E [label="6"];' + '\n' +
+        $("#graphinput").val('graph { A; B; C; D; E; ' + '\n' +
+            'A -- B [label="4"];' + '\n' +
+            'B -- D [label="5"];' + '\n' +
+            'D -- E [label="6"];' + '\n' +
+            'E -- A [label="4"];' + '\n' +
+            'C -- A [label="9"];' + '\n' +
+            'C -- B [label="7"];' + '\n' +
+            'C -- D [label="6"];' + '\n' +
+            'C -- E [label="6"];' + '\n' +
             'splines=false;' +
             '}');
         M.textareaAutoResize($('#graphinput'));
@@ -78,8 +78,8 @@ class Algoritmus {
     }
 
     /** loguje kroky a ukazuje ich na interfacy **/
-    log(text, object) {
-        this.logger.log(text, object);
+    log(text, object, draw) {
+        this.logger.log(text, object, draw);
     }
 
     compute() {
@@ -132,48 +132,58 @@ class Logger {
             canvas.setAttribute("class", "canvas");
             canvas.setAttribute("id", "canvas_step_id");
             $('#output').find("#" + step_id + ' .possible_canvas').append(canvas);
-            this.draw(canvas, object);
+            this._draw(canvas, object);
         }
 
         this.step++;
     }
 
-    draw(canvas, object) {
+    _draw(canvas, object) {
         var visn = new vis.Network(canvas, {}, options);
         var dataset = vis.parseDOTNetwork(this.alg.dot);
         visn.setData(dataset);
-        this.draw_highlight(visn, dataset, object);
+        this._highlight(visn, dataset, object);
     }
 
-    draw_highlight(visn, dataset, object) {
-        var ids = [];
-        if (this.draw_object_type(object) === 'EDGE') {
-            ids = this.draw_get_edge_ids(dataset, object);
-            this.vis_updateEdgesForIds(visn, dataset, ids, {color: '#ff383f'});
+    _highlight(visn, dataset, object) {
+        var edges = [];
+        if (this.draw_object_type(object) === 'EDG') {
+            edges = this.draw_get_edges(dataset, object);
+            this.vis_updateEdgesForIds(visn, dataset, edges, '#ff383f');
         }
     }
 
-    vis_updateEdgesForIds(visn, dataset, ids, color) {
-        _.forEach(ids, function (id) {
-            let options = {
-                edges: {
-                    id: id,
-                    color: color
-                }
+    vis_updateEdgesForIds(visn, dataset, edges, color) {
+        let colored_edges = [];
+        dataset.edges = _.map(dataset.edges, function (edge) {
+            if (_.includes(edges, edge.id)) {
+                edge.color = {color: color};
+                colored_edges.push(edge.from);
+                colored_edges.push(edge.to);
+                colored_edges = _.uniq(colored_edges);
             }
-            visn.setOptions(options);
+            return edge;
         });
+
+        dataset.nodes = _.map(dataset.nodes, function (node) {
+            if (_.includes(colored_edges, node.id)) {
+                node.color = color;
+            }
+            return node;
+        });
+
+        visn.setData(dataset);
     }
 
     draw_object_type(object) {
         if (_.every(object, function (o) {
             return _.has(o, 'w')
         })) {
-            return 'EDGE';
+            return 'EDG';
         }
     }
 
-    draw_get_edge_ids(dataset, object) {
+    draw_get_edges(dataset, object) {
         let edge_ids = [];
         let self = this.self;
         _.forEach(object, function (value) {
@@ -186,8 +196,13 @@ class Logger {
     }
 
     vis_getEdgeBetweenNodes(dataset, node1, node2) {
+        let self = this;
         return dataset.edges.filter(function (edge) {
-            return (edge.from === node1 && edge.to === node2);
+            if (self.alg.graph.isDirected()) {
+                return (edge.from === node1 && edge.to === node2);
+            } else {
+                return ((edge.from === node1 && edge.to === node2) || (edge.from === node2 && edge.to === node1));
+            }
         });
     };
 
@@ -281,7 +296,6 @@ PriorityQueue.prototype.min = function () {
  */
 PriorityQueue.prototype.add = function (key, priority) {
     var keyIndices = this._keyIndices;
-    key = String(key);
     if (!_.has(keyIndices, key)) {
         var arr = this._arr;
         var index = arr.length;
@@ -292,6 +306,19 @@ PriorityQueue.prototype.add = function (key, priority) {
     }
     return false;
 };
+
+/**
+ * add composite
+ * @param composite
+ */
+PriorityQueue.prototype.addCompostieWithLabelValues = function (composite) {
+    let self = this;
+    _.forEach(composite, function (comp) {
+
+        self.add(comp, comp.value.label);
+    });
+};
+
 
 /**
  * Removes and returns the smallest key in the queue. Takes `O(log n)` time.
