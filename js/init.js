@@ -1,4 +1,4 @@
-let alg;
+let plot;
 let options = {
     layout: {
         randomSeed: 2,
@@ -21,7 +21,6 @@ let options = {
     }
 };
 
-
 (function ($) {
     $(function () {
 
@@ -38,7 +37,7 @@ let options = {
                 'splines=false;' +
                 '}');
             M.textareaAutoResize($('#graphinput'));
-            alg = new Algoritmus();
+            plot = new Plot();
         });
 
         $("#orientovany").click(function () {
@@ -70,55 +69,21 @@ let options = {
                 'splines=false;' +
                 '}');
             M.textareaAutoResize($('#graphinput'));
-            alg = new Algoritmus();
+            plot = new Plot();
         });
     });
 
     $("#graphinput").bind('input propertychange', function () {
-        alg.replot();
+        plot.replot();
     });
 })(jQuery);
 
-
-/** tato trieda ti zjednosui zivot pri algorimtoch */
-
-class Algoritmus {
-    /** inicizalizuje co treba, aby vykreslovalo a fungovali grafove metody */
+class Plot {
     constructor() {
         this.dot = $("#graphinput").val();
-        this.graph = new graphlibDot.read(this.dot);
         this.vis = new vis.Network(document.getElementById('canvas'), {}, options);
-        this.logger = new Logger(this);
         this.plot();
     }
-
-    /** vrati hodnotu hrany */
-    label(edge) {
-        return this.graph.edge(edge).label;
-    }
-
-    /** vrati zoznam hran aj s ich hodnotami */
-    edges_with_values() {
-        let self = this; // save object reference
-
-        return _.map(this.graph.edges(), function (edge) {
-            return {'v': edge.v, 'w': edge.w, 'value': {'label': self.label(edge)}}
-        });
-    }
-
-    /** vrati usporiadani zoznam hran od najmensieho */
-    edges_sorted(sort) {
-        if (sort === undefined) {
-            sort = 'asc'
-        }
-        let edges = this.edges_with_values();
-        let sorted = _.orderBy(edges, function (e) {
-            return e.value.label
-        }, [sort]);
-        return sorted;
-    }
-
-    /** TOTO SU UZ TECHNICKE METODY, NECHAJ ICH TAK */
 
     /** kreslenie grafu */
     plot() {
@@ -131,6 +96,58 @@ class Algoritmus {
         this.dot = $("#graphinput").val();
         this.plot();
     }
+}
+
+
+/** tato trieda ti zjednosui zivot pri algorimtoch */
+
+class Algoritmus {
+    /** inicizalizuje co treba, aby vykreslovalo a fungovali grafove metody */
+    constructor(plot) {
+        this.plot = plot;
+        this.logger = new Logger(this);
+        this.dot = $("#graphinput").val();
+        this.graph = new graphlibDot.read(this.dot);
+    }
+
+    /** vrati hodnotu hrany */
+    label(edge) {
+        return this.graph.edge(edge).label;
+    }
+
+    /** vrati zoznam hran aj s ich hodnotami */
+    edges_with_values() {
+        return this.include_label_to_edges(this.graph.edges())
+    }
+
+
+    /** ak hrany nemaju hodnoty tak im ju prida */
+    include_label_to_edges(edges) {
+        let self = this; // save object reference
+
+        return _.map(edges, function (edge) {
+            return {'v': edge.v, 'w': edge.w, 'value': {'label': self.label(edge)}}
+        });
+    }
+
+
+    /** vrati usporiadani zoznam hran od najmensieho */
+    edges_sorted(sort) {
+        let edges = this.edges_with_values();
+        return this.sort_edges(edges, sort);
+    }
+
+    sort_edges(edges, sort) {
+        if (sort === undefined) {
+            sort = 'asc'
+        }
+        let sorted = _.orderBy(edges, function (e) {
+            return e.value.label
+        }, [sort]);
+        return sorted;
+    }
+
+    /** TOTO SU UZ TECHNICKE METODY, NECHAJ ICH TAK */
 
     /** loguje kroky a ukazuje ich na interfacy **/
     log(text, object, draw) {

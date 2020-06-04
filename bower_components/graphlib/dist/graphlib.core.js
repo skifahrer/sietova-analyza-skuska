@@ -333,7 +333,7 @@
         try {
           topsort(g);
         } catch (e) {
-          if (e instanceof topsort.CycleException) {
+          if (e instanceof topsort.CycleException || e instanceof CycleException) {
             return false;
           }
           throw e;
@@ -715,6 +715,12 @@
         // v -> w -> Number
         this._sucs = {};
 
+        // v -> edgeObj.count || edgeObj.count -> w
+        this._connected_edges_count = {};
+
+        // connected components
+        this._connected_components = {};
+
         // e -> edgeObj
         this._edgeObjs = {};
 
@@ -781,7 +787,11 @@
       Graph.prototype.sinks = function () {
         var self = this;
         return _.filter(this.nodes(), function (v) {
-          return _.isEmpty(self._out[v]);
+          if (self.isDirected()) {
+            return _.isEmpty(self._out[v]);
+          } else {
+            return self._connected_edges_count[v] === 1; //if graph has only one incoming or outcomming node
+          }
         });
       };
 
@@ -814,6 +824,7 @@
         }
         this._in[v] = {};
         this._preds[v] = {};
+        this._connected_edges_count [v] = 0;
         this._out[v] = {};
         this._sucs[v] = {};
         ++this._nodeCount;
@@ -846,6 +857,7 @@
           _.each(_.keys(this._in[v]), removeEdge);
           delete this._in[v];
           delete this._preds[v];
+          delete this._connected_edges_count[v];
           _.each(_.keys(this._out[v]), removeEdge);
           delete this._out[v];
           delete this._sucs[v];
@@ -1082,6 +1094,8 @@
         this._edgeObjs[e] = edgeObj;
         incrementOrInitEntry(this._preds[w], v);
         incrementOrInitEntry(this._sucs[v], w);
+        this._connected_edges_count[v]++;
+        this._connected_edges_count[w]++;
         this._in[w][e] = edgeObj;
         this._out[v][e] = edgeObj;
         this._edgeCount++;
@@ -1114,6 +1128,8 @@
           delete this._edgeObjs[e];
           decrementOrRemoveEntry(this._preds[w], v);
           decrementOrRemoveEntry(this._sucs[v], w);
+          this._connected_edges_count[v]--;
+          this._connected_edges_count[w]--;
           delete this._in[w][e];
           delete this._out[v][e];
           this._edgeCount--;
