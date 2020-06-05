@@ -54,8 +54,8 @@ class Kruskal extends Algoritmus {
 
         while (kostra.nodes().length < this.graph.nodes().length) {
             let kostra_edges = this.include_label_to_edges(kostra.edges());
-            let con_edges = this.get_connected_edges_from_graph(kostra.nodes());
-            let edges = con_edges.filter(x => !kostra_edges.includes(x));
+            let con_edges = this.get_outgoing_edges_from_selected_nodes_and_sort(kostra.nodes());
+            let edges = _.differenceWith(con_edges, kostra_edges, _.isEqual);
 
             _.forEach(edges, function (edge) {
 
@@ -83,17 +83,6 @@ class Kruskal extends Algoritmus {
         });
         this.log('Hura mame minimalnu finalnu kostru grafu. Celkove ohodnotenie minimalnej kostry je: ' + _.join(hodnoty, ' + ') + ' =  ' + _.sum(hodnoty), K, true);
 
-    }
-
-    get_connected_edges_from_graph(nodes) {
-        let edges = [];
-        let self = this;
-        _.forEach(nodes, function (node) {
-            let node_edges = self.graph.outEdges(node);
-            edges = _.merge(edges, node_edges);
-        });
-
-        return this.sort_edges(this.include_label_to_edges(edges), 'asc');
     }
 
     neorientovany() {
@@ -130,13 +119,5 @@ class Kruskal extends Algoritmus {
             return parseInt(e.value.label)
         });
         this.log('Hura mame minimalnu finalnu kostru grafu. Celkove ohodnotenie minimalnej kostry je: ' + _.join(hodnoty, ' + ') + ' =  ' + _.sum(hodnoty), K, true);
-    }
-
-    sort(component_prev) {
-        var arr = [];
-        _.forEach(component_prev, function (array) {
-            arr.push(array.sort());
-        });
-        return arr;
     }
 }

@@ -130,6 +130,22 @@ class Algoritmus {
         });
     }
 
+    get_outgoing_edges_from_selected_nodes_and_sort(nodes) {
+        let edges = [];
+        let self = this;
+        _.forEach(nodes, function (node) {
+            let node_edges = [];
+            if (self.graph.isDirected()) {
+                node_edges = self.graph.outEdges(node);
+            } else {
+                node_edges = self.graph.nodeEdges(node);
+            }
+            edges = _.unionWith(edges, node_edges, _.isEqual)
+        });
+
+        return this.sort_edges(this.include_label_to_edges(edges), 'asc');
+    }
+
 
     /** vrati usporiadani zoznam hran od najmensieho */
     edges_sorted(sort) {
@@ -146,6 +162,15 @@ class Algoritmus {
         }, [sort]);
         return sorted;
     }
+
+    sort(component_prev) {
+        var arr = [];
+        _.forEach(component_prev, function (array) {
+            arr.push(array.sort());
+        });
+        return arr;
+    }
+
 
     /** TOTO SU UZ TECHNICKE METODY, NECHAJ ICH TAK */
 
