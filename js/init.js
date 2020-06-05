@@ -4,7 +4,7 @@ let options = {
         randomSeed: 2,
     },
     edges: {
-        color: {color: "blue"},
+        color: {color: "#444444"},
         smooth: {
             enabled: true,
             type: "dynamic",
@@ -18,6 +18,9 @@ let options = {
                 scaleFactor: 0.3,
             }
         }
+    },
+    nodes: {
+        color: 'grey'
     }
 };
 
@@ -175,8 +178,8 @@ class Algoritmus {
     /** TOTO SU UZ TECHNICKE METODY, NECHAJ ICH TAK */
 
     /** loguje kroky a ukazuje ich na interfacy **/
-    log(text, object, draw) {
-        this.logger.log(text, object, draw);
+    log(text, object, draw, color) {
+        this.logger.log(text, object, draw, color);
     }
 
     compute(title) {
@@ -204,7 +207,7 @@ class Logger {
         $("#output").prepend('<h2>' + title + '</h2>');
     }
 
-    log(text, object, draw) {
+    log(text, object, draw, color) {
         draw = (typeof draw === 'undefined') ? true : draw;
 
         let step_id = 'step' + this.step;
@@ -239,24 +242,25 @@ class Logger {
             canvas.setAttribute("class", "canvas");
             canvas.setAttribute("id", "canvas_step_id");
             $('#output').find("#" + step_id + ' .possible_canvas').append(canvas);
-            this._draw(canvas, object);
+            this._draw(canvas, object, color);
         }
 
         this.step++;
     }
 
-    _draw(canvas, object) {
+    _draw(canvas, object, color) {
         var visn = new vis.Network(canvas, {}, options);
         var dataset = vis.parseDOTNetwork(this.alg.dot);
         visn.setData(dataset);
-        this._highlight(visn, dataset, object);
+        this._highlight(visn, dataset, object, color);
     }
 
-    _highlight(visn, dataset, object) {
+    _highlight(visn, dataset, object, color) {
         var edges = [];
         if (this._get_object_type(object) === 'EDG') {
             edges = this._get_edges_from_object(dataset, object);
-            this._highlight_edges(visn, dataset, edges, '#ff383f');
+            color = (typeof color === 'undefined') ? '#04c323' : color;
+            this._highlight_edges(visn, dataset, edges, color);
         }
     }
 
