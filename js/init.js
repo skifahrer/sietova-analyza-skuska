@@ -111,6 +111,7 @@ class Algoritmus {
         this.logger = new Logger(this);
         this.dot = $("#graphinput").val();
         this.graph = new graphlibDot.read(this.dot);
+        this.kostra = new graphlib.Graph({directed: this.graph.isDirected()});
     }
 
     /** vrati hodnotu hrany */
@@ -118,11 +119,43 @@ class Algoritmus {
         return this.graph.edge(edge).label;
     }
 
-    /** vrati zoznam hran aj s ich hodnotami */
-    edges_with_values() {
-        return this.include_label_to_edges(this.graph.edges())
+    /** vrati hodnotu hrany */
+    value(node) {
+        return this.graph.node(node);
     }
 
+    /** vrati zoznam hran aj s ich hodnotami */
+    edges() {
+        return this.include_label_to_edges(this.graph.edges());
+    }
+
+    /**
+     * zaciatocny vrchol
+     */
+    starting_node() {
+        let nodes = this.plot.vis.getSelectedNodes();
+        let S = this.graph.nodes();
+        let node;
+        if (nodes.length === 0) {
+            node = S[(_.random(0, S.length - 1))];
+            this.log('Kedze vrchol nebol oznaceny, tak vyberieme nahodne jeden vrchol, a tym vrcholom je: <b>' + node + '</b>', node, false);
+        } else {
+            node = nodes[0];
+            this.log('Ideme hladat kostru z oznaceneho vrcholu: <b>' + node + '</b>', node, false);
+        }
+        return node;
+    }
+
+    /**
+     * nodes matrix
+     */
+    node_matrix(nodes) {
+        const obj_a = {};
+        nodes.forEach(function (node) {
+            obj_a[node] = -1;   // using the current value as key
+        });
+        return obj_a;
+    }
 
     /** ak hrany nemaju hodnoty tak im ju prida */
     include_label_to_edges(edges) {
@@ -152,7 +185,7 @@ class Algoritmus {
 
     /** vrati usporiadani zoznam hran od najmensieho */
     edges_sorted(sort) {
-        let edges = this.edges_with_values();
+        let edges = this.edges();
         return this.sort_edges(edges, sort);
     }
 
@@ -174,6 +207,14 @@ class Algoritmus {
         return arr;
     }
 
+    sort_assoc(Distances) {
+        return _(Distances)
+            .toPairs()
+            .orderBy([1], ['asc'])
+            .fromPairs()
+            .value();
+    }
+
 
     /** TOTO SU UZ TECHNICKE METODY, NECHAJ ICH TAK */
 
@@ -184,6 +225,7 @@ class Algoritmus {
 
     compute(title) {
         this.logger.init(title);
+
     }
 }
 
